@@ -1,0 +1,15 @@
+[package]
+name = "aoc2023"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "aoc_tools"
+path = "src/lib.rs"
+
+[[bin]]
+name = "day1"
+path = "src/day1.rs"
+
+[dependencies]
