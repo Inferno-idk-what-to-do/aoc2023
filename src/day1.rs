@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 use aoc_tools;
 
 fn first_last_digit(str: &str) -> i32 {
