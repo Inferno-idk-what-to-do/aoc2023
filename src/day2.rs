@@ -49,6 +49,10 @@ impl Game {
     fn is_valid(&self, max_red: i32, max_green: i32, max_blue: i32) -> bool {
         self.max_red <= max_red && self.max_green <= max_green && self.max_blue <= max_blue
     }
+
+    fn power(&self) -> i32 {
+        self.max_red * self.max_green * self.max_blue
+    }
 }
 
 fn main() {
@@ -56,4 +60,7 @@ fn main() {
 
     let part1: i32 = input.iter().filter(|game| game.is_valid(12, 13, 14)).map(|g| g.id).sum();
     println!("{}", part1);
+
+    let part2: i32 = input.iter().map(|g| g.power()).sum();
+    println!("{}", part2);
 }
