@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::iter::repeat;
 use std::str::FromStr;
 use std::string::ParseError;
 
@@ -59,9 +60,41 @@ impl Card {
     }
 }
 
+struct CardStack {
+    cards: Vec<Card>,
+    copies: Vec<u32>,
+}
+
+impl CardStack {
+    fn create(&mut self, card_vec: Vec<Card>) {
+        self.cards = card_vec;
+        self.copies = repeat(1).take(self.cards.len()).collect::<Vec<u32>>();
+
+        // run over each card
+        for card_idx in 0..self.cards.len() {
+            let num_winners = self.cards[card_idx].num_winners(); 
+
+            // run over each following card for each num winners
+            for copies_idx in (card_idx+1)..(card_idx + num_winners as usize + 1usize) {
+                // inc num copies by number over copies of current card
+                self.copies[copies_idx] += self.copies[card_idx];
+            }
+        }
+    } 
+
+    fn total_cards(&self) -> u32 {
+        self.copies.iter().sum()
+    }
+}
+
 fn main() {
     let data = aoc_tools::read_lines::<Card>("data/day4.txt").unwrap();
     
     let part1 = data.iter().map(|card| card.score()).sum::<u32>();
     println!("{}", part1);
+
+    let mut stack = CardStack { cards: vec![], copies: vec![] };
+    stack.create(data);
+    let part2 = stack.total_cards();
+    println!("{}", part2);
 }
