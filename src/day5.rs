@@ -39,23 +39,23 @@ impl Mapping {
 }
 
 struct Map {
-    maps: Vec<Mapping>,
+    mappings: Vec<Mapping>,
 }
 
 impl Map {
     fn from_vec(lines: Vec<String>) -> Self {
-        let mut maps: Vec<Mapping> = Vec::new();
+        let mut mappings: Vec<Mapping> = Vec::new();
 
         for line in lines[1..].iter() {
-            maps.push(Mapping::from_str(line).unwrap()); 
+            mappings.push(Mapping::from_str(line).unwrap()); 
         }
 
-        return Map {maps};
+        return Map {mappings};
     }
 
     fn map(&self, n: u64) -> u64 {
         let mut num = n;
-        for mapping in self.maps.iter() {
+        for mapping in self.mappings.iter() {
             num = mapping.map(num); 
         }
 
@@ -63,9 +63,27 @@ impl Map {
     }
 }
 
-fn main() {
-    let data = aoc_tools::read_lines::<String>("data/day5_map.txt").unwrap();
-    let map = Map::from_vec(data);
+struct Chain {
+    seeds: Vec<u64>,
+    maps: Vec<Map>,
+}
 
-    println!("{}", map.map(237273108));
+impl Chain {
+    fn from_blocks(blocks: Vec<Vec<String>>) -> Self {
+        let seeds_string = blocks[0][0].clone(); 
+        let seeds_strs = &seeds_string.split(" ").collect::<Vec<&str>>()[1..];
+        let mut seeds: Vec<u64> = Vec::new();
+        for seed in seeds_strs.iter() {
+            seeds.push(seed.parse::<u64>().unwrap()); 
+        }
+
+        return Chain { seeds, maps: vec![] };
+    }
+}
+
+fn main() {
+    let data = aoc_tools::read_blocks::<String>("data/day5.txt").unwrap();
+    let chain = Chain::from_blocks(data);
+
+    println!("{:?}", chain.seeds);
 }
