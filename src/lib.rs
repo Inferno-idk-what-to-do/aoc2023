@@ -32,5 +32,6 @@ pub fn read_blocks<T: FromStr + Default>(filename: &str) -> Result<Vec<Vec<T>>, 
         }
     }
 
+    whole.push(current);
     return Ok(whole);
 }

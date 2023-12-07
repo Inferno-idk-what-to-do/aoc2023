@@ -3,6 +3,7 @@ use std::string::ParseError;
 
 use aoc_tools;
 
+#[derive(Debug)]
 struct Mapping {
     seed_start: u64,
     dest_start: u64,
@@ -38,6 +39,7 @@ impl Mapping {
     }
 }
 
+#[derive(Debug)]
 struct Map {
     mappings: Vec<Mapping>,
 }
@@ -54,12 +56,13 @@ impl Map {
     }
 
     fn map(&self, n: u64) -> u64 {
-        let mut num = n;
         for mapping in self.mappings.iter() {
-            num = mapping.map(num); 
+            if mapping.map(n) != n {
+                return mapping.map(n);
+            }
         }
 
-        return num;
+        return n;
     }
 }
 
@@ -77,7 +80,33 @@ impl Chain {
             seeds.push(seed.parse::<u64>().unwrap()); 
         }
 
-        return Chain { seeds, maps: vec![] };
+        let map_blocks = &blocks[1..];
+        let mut maps: Vec<Map> = Vec::new();
+        for map in map_blocks {
+            maps.push(Map::from_vec(map.to_vec())); 
+        }
+
+        return Chain { seeds, maps };
+    }
+
+    fn map_all(&self) -> Vec<u64> {
+        let mut mapped = self.seeds.clone();
+
+        for map in self.maps.iter() {
+            let mut current_mapped = Vec::new();
+            
+            for n in mapped.iter() {
+                current_mapped.push(map.map(*n));
+            }
+
+            mapped = current_mapped;
+        }
+
+        return mapped;
+    }
+
+    fn smallest(&self) -> u64 {
+        *self.map_all().iter().min().unwrap()
     }
 }
 
@@ -85,5 +114,6 @@ fn main() {
     let data = aoc_tools::read_blocks::<String>("data/day5.txt").unwrap();
     let chain = Chain::from_blocks(data);
 
-    println!("{:?}", chain.seeds);
+    let part1 = chain.smallest();
+    println!("{}", part1);
 }
