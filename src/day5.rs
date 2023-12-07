@@ -89,13 +89,41 @@ impl Chain {
         return Chain { seeds, maps };
     }
 
+    fn from_blocks_ranges(blocks: Vec<Vec<String>>) -> Self {
+        let seeds_string = blocks[0][0].clone(); 
+        let seeds_strs = &seeds_string.split(" ").collect::<Vec<&str>>()[1..];
+        let mut seeds: Vec<u64> = Vec::new();
+        for i in 0..seeds_strs.len() {
+            let start_num = seeds_strs[i].parse::<u64>().unwrap();
+            let len = seeds_strs[i+1].parse::<u64>().unwrap();
+
+            for y in start_num..start_num+len {
+                seeds.push(y);
+                println!("adding seed {}", y);
+            }
+        }
+
+        let map_blocks = &blocks[1..];
+        let mut maps: Vec<Map> = Vec::new();
+        for map in map_blocks {
+            maps.push(Map::from_vec(map.to_vec())); 
+        }
+
+        return Chain { seeds, maps };
+    }
+
     fn map_all(&self) -> Vec<u64> {
         let mut mapped = self.seeds.clone();
 
         for map in self.maps.iter() {
             let mut current_mapped = Vec::new();
             
+            let mut first_num = true;
             for n in mapped.iter() {
+                if first_num {
+                    println!("mapping {}", n);
+                    first_num = false;
+                }
                 current_mapped.push(map.map(*n));
             }
 
@@ -112,7 +140,7 @@ impl Chain {
 
 fn main() {
     let data = aoc_tools::read_blocks::<String>("data/day5.txt").unwrap();
-    let chain = Chain::from_blocks(data);
+    let chain = Chain::from_blocks_ranges(data);
 
     let part1 = chain.smallest();
     println!("{}", part1);
